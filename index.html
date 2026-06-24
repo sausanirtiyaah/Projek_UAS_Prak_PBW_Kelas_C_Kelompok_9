@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KosMed - Health tracker sederhana untuk anak kos. Pantau stok obat, pola makan, air minum, tidur, dan keluhan kesehatanmu.">
+    <title>KosMed - Health Tracker untuk Anak Kos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<div id="auth-screen">
+    <div class="auth-bg-decor"></div>
+    <div class="auth-left">
+        <div class="auth-brand-wrap animate-fade-in">
+            <div class="auth-logo-circle mb-4"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h1 class="auth-brand-title">KosMed</h1>
+            <p class="auth-brand-sub">Health Tracker untuk Anak Kos</p>
+            <div class="auth-features mt-4">
+                <div class="auth-feature-item"><i class="fa-solid fa-pills"></i> Pantau stok obatmu</div>
+                <div class="auth-feature-item"><i class="fa-solid fa-utensils"></i> Catat pola makan harian</div>
+                <div class="auth-feature-item"><i class="fa-solid fa-droplet"></i> Tracker air minum</div>
+                <div class="auth-feature-item"><i class="fa-solid fa-moon"></i> Monitor pola tidur</div>
+                <div class="auth-feature-item"><i class="fa-solid fa-bell"></i> Reminder kesehatan</div>
+            </div>
+        </div>
+    </div>
+    <div class="auth-right">
+        <!-- LOGIN -->
+        <div id="panel-login" class="auth-panel animate-slide-up">
+            <h2 class="auth-panel-title">Masuk</h2>
+            <p class="auth-panel-sub">Selamat datang kembali!</p>
+            <form id="form-login" onsubmit="auth.login(event)" novalidate>
+                <div class="mb-3">
+                    <label class="km-label">Username</label>
+                    <div class="km-input-icon-wrap">
+                        <i class="fa-solid fa-user km-input-icon"></i>
+                        <input type="text" id="login-username" class="km-input km-input-icon-pad" placeholder="Masukkan username" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="km-label">Password</label>
+                    <div class="km-input-icon-wrap">
+                        <i class="fa-solid fa-lock km-input-icon"></i>
+                        <input type="password" id="login-password" class="km-input km-input-icon-pad" placeholder="Masukkan password" required>
+                        <button type="button" class="km-input-toggle" onclick="auth.togglePass('login-password',this)"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <div id="login-error" class="auth-error d-none"></div>
+                <button type="submit" id="btn-login" class="btn-km-primary w-100 mb-3">
+                    <i class="fa-solid fa-arrow-right-to-bracket me-2"></i>Masuk
+                </button>
+                <p class="text-center auth-switch-text">Belum punya akun? <a href="#" onclick="auth.showPanel('register');return false;" class="auth-link">Daftar sekarang</a></p>
+            </form>
+        </div>
+        <!-- REGISTER -->
+        <div id="panel-register" class="auth-panel animate-slide-up d-none">
+            <h2 class="auth-panel-title">Daftar</h2>
+            <p class="auth-panel-sub">Buat akun KosMed gratis.</p>
+            <form id="form-register" onsubmit="auth.register(event)" novalidate>
+                <div class="mb-3">
+                    <label class="km-label">Nama Lengkap</label>
+                    <div class="km-input-icon-wrap">
+                        <i class="fa-solid fa-id-card km-input-icon"></i>
+                        <input type="text" id="reg-name" class="km-input km-input-icon-pad" placeholder="Nama kamu" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="km-label">Username</label>
+                    <div class="km-input-icon-wrap">
+                        <i class="fa-solid fa-user km-input-icon"></i>
+                        <input type="text" id="reg-username" class="km-input km-input-icon-pad" placeholder="Buat username unik" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="km-label">Password</label>
+                    <div class="km-input-icon-wrap">
+                        <i class="fa-solid fa-lock km-input-icon"></i>
+                        <input type="password" id="reg-password" class="km-input km-input-icon-pad" placeholder="Min. 6 karakter" required>
+                        <button type="button" class="km-input-toggle" onclick="auth.togglePass('reg-password',this)"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="km-label">Konfirmasi Password</label>
+                    <div class="km-input-icon-wrap">
+                        <i class="fa-solid fa-lock km-input-icon"></i>
+                        <input type="password" id="reg-confirm" class="km-input km-input-icon-pad" placeholder="Ulangi password" required>
+                    </div>
+                </div>
+                <div id="register-error" class="auth-error d-none"></div>
+                <button type="submit" id="btn-register" class="btn-km-primary w-100 mb-3">
+                    <i class="fa-solid fa-user-plus me-2"></i>Buat Akun
+                </button>
+                <p class="text-center auth-switch-text">Sudah punya akun? <a href="#" onclick="auth.showPanel('login');return false;" class="auth-link">Masuk di sini</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== WELCOME SCREEN ===================== -->
+<div id="welcome-screen" class="d-none">
+    <div class="welcome-bg-decor"></div>
+    <div class="welcome-content animate-fade-in">
+        <div class="welcome-logo-circle mb-4"><i class="fa-solid fa-heart-pulse"></i></div>
+        <h1 class="welcome-title">KosMed</h1>
+        <p class="welcome-subtitle">Health Tracker untuk Anak Kos</p>
+        <p class="welcome-desc">Halo, <strong id="welcome-username" class="text-ivory-strong"></strong>! 👋<br>Siap jaga kesehatanmu hari ini?</p>
+        <button class="btn-welcome" onclick="app.startApp()"><i class="fa-solid fa-arrow-right me-2"></i>Mulai Sekarang</button>
+    </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="main-app" class="d-none">
+    <nav class="navbar navbar-expand-lg km-navbar fixed-top" id="km-navbar">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand km-brand" href="#" onclick="app.switchTab('dashboard');return false;">
+                <i class="fa-solid fa-heart-pulse me-2"></i>KosMed
+            </a>
+            <button class="navbar-toggler km-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto gap-1">
+                    <li class="nav-item"><a class="nav-link km-navlink active" id="nav-dashboard" href="#" onclick="app.switchTab('dashboard');return false;"><i class="fa-solid fa-gauge me-1"></i>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link km-navlink" id="nav-obat" href="#" onclick="app.switchTab('obat');return false;"><i class="fa-solid fa-pills me-1"></i>Stok Obat</a></li>
+                    <li class="nav-item"><a class="nav-link km-navlink" id="nav-makanan" href="#" onclick="app.switchTab('makanan');return false;"><i class="fa-solid fa-utensils me-1"></i>Makanan</a></li>
+                    <li class="nav-item"><a class="nav-link km-navlink" id="nav-air" href="#" onclick="app.switchTab('air');return false;"><i class="fa-solid fa-droplet me-1"></i>Air Minum</a></li>
+                    <li class="nav-item"><a class="nav-link km-navlink" id="nav-reminder" href="#" onclick="app.switchTab('reminder');return false;"><i class="fa-solid fa-bell me-1"></i>Reminder</a></li>
+                    <li class="nav-item"><a class="nav-link km-navlink" id="nav-keluhan" href="#" onclick="app.switchTab('keluhan');return false;"><i class="fa-solid fa-notes-medical me-1"></i>Keluhan</a></li>
+                    <li class="nav-item"><a class="nav-link km-navlink" id="nav-tidur" href="#" onclick="app.switchTab('tidur');return false;"><i class="fa-solid fa-moon me-1"></i>Tidur</a></li>
+                    <li class="nav-item"><a class="nav-link km-navlink" id="nav-ringkasan" href="#" onclick="app.switchTab('ringkasan');return false;"><i class="fa-solid fa-chart-bar me-1"></i>Ringkasan</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2 ms-2">
+                    <div class="navbar-avatar" id="navbar-avatar">A</div>
+                    <span class="navbar-username" id="navbar-username">User</span>
+                    <button class="btn-logout" onclick="auth.logout()" title="Keluar"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="km-main-content">
+        <div id="alerts-container" class="mb-4"></div>
+
+        <!-- DASHBOARD -->
+        <div id="tab-dashboard" class="tab-view animate-slide-up">
+            <div class="page-header mb-4">
+                <h2 class="page-title"><i class="fa-solid fa-gauge me-2"></i>Dashboard</h2>
+                <p class="page-subtitle">Ringkasan kondisi kesehatanmu hari ini</p>
+            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="km-card h-100 text-center">
+                        <div class="km-card-icon-wrap bg-blue-soft mb-3"><i class="fa-solid fa-droplet text-blue"></i></div>
+                        <h6 class="km-card-label">Air Minum Hari Ini</h6>
+                        <div class="km-stat-big"><span id="dash-air-current">0</span><span class="km-stat-sep">/</span><span id="dash-air-target">8</span></div>
+                        <div class="km-stat-unit">gelas</div>
+                        <div class="km-progress-wrap mt-3"><div class="km-progress"><div id="dash-air-progress" class="km-progress-bar bg-blue" style="width:0%"></div></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="km-card h-100 text-center">
+                        <div class="km-card-icon-wrap bg-green-soft mb-3"><i class="fa-solid fa-bowl-food text-green"></i></div>
+                        <h6 class="km-card-label">Pola Makan</h6>
+                        <div class="row mt-3">
+                            <div class="col-6"><div class="km-stat-mini text-green" id="dash-makan-sehat">0</div><div class="km-stat-mini-label">Sehat</div></div>
+                            <div class="col-6"><div class="km-stat-mini text-maroon" id="dash-makan-buruk">0</div><div class="km-stat-mini-label">Kurang</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="km-card h-100 text-center">
+                        <div class="km-card-icon-wrap bg-purple-soft mb-3"><i class="fa-solid fa-moon text-purple"></i></div>
+                        <h6 class="km-card-label">Tidur Terakhir</h6>
+                        <div class="km-stat-big" id="dash-tidur-durasi" style="font-size:2rem;">—</div>
+                        <div class="km-stat-unit" id="dash-tidur-status">Belum ada data</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="km-card h-100 text-center">
+                        <div class="km-card-icon-wrap bg-red-soft mb-3"><i class="fa-solid fa-kit-medical text-maroon"></i></div>
+                        <h6 class="km-card-label">Status Stok Obat</h6>
+                        <div id="dash-obat-status" class="mt-3"><div class="km-badge-status status-safe"><i class="fa-solid fa-check me-1"></i>Aman</div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Reminder Progress di Dashboard -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="km-card p-4">
+                        <h6 class="km-card-label mb-3"><i class="fa-solid fa-bell me-1"></i>Reminder Hari Ini</h6>
+                        <div id="dash-reminder-list">
+                            <p class="text-muted" style="font-size:.88rem;">Memuat...</p>
+                        </div>
+                        <a href="#" onclick="app.switchTab('reminder');return false;" class="dash-link mt-2 d-inline-block">Lihat semua →</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="km-card p-4">
+                        <h5 class="fw-semibold mb-3 text-maroon"><i class="fa-solid fa-bolt me-2"></i>Aksi Cepat</h5>
+                        <div class="row g-2">
+                            <div class="col-6"><button class="km-quick-btn w-100 py-3" onclick="app.switchTab('obat')"><i class="fa-solid fa-pills mb-1 d-block fs-5"></i><span style="font-size:.82rem;">Stok Obat</span></button></div>
+                            <div class="col-6"><button class="km-quick-btn w-100 py-3" onclick="app.switchTab('makanan')"><i class="fa-solid fa-utensils mb-1 d-block fs-5"></i><span style="font-size:.82rem;">Catat Makan</span></button></div>
+                            <div class="col-6"><button class="km-quick-btn km-quick-btn-primary w-100 py-3" onclick="app.tambahAirDashboard()"><i class="fa-solid fa-plus mb-1 d-block fs-5"></i><span style="font-size:.82rem;">+1 Gelas Air</span></button></div>
+                            <div class="col-6"><button class="km-quick-btn w-100 py-3" onclick="app.switchTab('ringkasan')"><i class="fa-solid fa-chart-bar mb-1 d-block fs-5"></i><span style="font-size:.82rem;">Ringkasan</span></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STOK OBAT -->
+        <div id="tab-obat" class="tab-view d-none animate-slide-up">
+            <div class="page-header mb-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div><h2 class="page-title"><i class="fa-solid fa-pills me-2"></i>Stok Obat</h2><p class="page-subtitle">Pantau ketersediaan obat-obatan di kosmu</p></div>
+                    <button class="btn-km-primary" data-bs-toggle="modal" data-bs-target="#modalTambahObat"><i class="fa-solid fa-plus me-2"></i>Tambah Obat</button>
+                </div>
+            </div>
+            <div class="row g-4" id="obat-list"></div>
+        </div>
+
+        <!-- TRACKER MAKANAN -->
+        <div id="tab-makanan" class="tab-view d-none animate-slide-up">
+            <div class="page-header mb-4">
+                <h2 class="page-title"><i class="fa-solid fa-utensils me-2"></i>Tracker Makanan</h2>
+                <p class="page-subtitle">Catat apa yang kamu makan hari ini</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="km-card p-4">
+                        <h5 class="fw-semibold text-maroon mb-3"><i class="fa-solid fa-pen-to-square me-2"></i>Catat Makanan</h5>
+                        <form id="form-makanan" onsubmit="app.tambahMakanan(event)">
+                            <div class="mb-3">
+                                <label class="km-label">Nama Makanan</label>
+                                <input type="text" id="input-makanan-nama" class="km-input" placeholder="Misal: nasi ayam, mie instan…" oninput="app.onMakananInput(this.value)" required autocomplete="off">
+                                <div id="food-detect-alert" class="food-detect-alert d-none"></div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="km-label">Waktu Makan</label>
+                                <select id="input-makanan-waktu" class="km-input" required>
+                                    <option value="pagi">🌅 Pagi</option>
+                                    <option value="siang">☀️ Siang</option>
+                                    <option value="malam">🌙 Malam</option>
+                                    <option value="snack">🍪 Cemilan</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="km-card p-4 h-100">
+                        <h5 class="fw-semibold text-maroon mb-3"><i class="fa-solid fa-clock-rotate-left me-2"></i>Riwayat Makanan</h5>
+                        <div class="table-responsive">
+                            <table class="table km-table">
+                                <thead><tr><th>Tanggal</th><th>Waktu</th><th>Makanan</th><th>Kategori</th><th></th></tr></thead>
+                                <tbody id="makanan-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRACKER AIR -->
+        <div id="tab-air" class="tab-view d-none animate-slide-up">
+            <div class="page-header mb-4 text-center">
+                <h2 class="page-title"><i class="fa-solid fa-droplet me-2"></i>Tracker Air Minum</h2>
+                <p class="page-subtitle">Jaga kecukupan cairan tubuhmu setiap hari</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="km-card p-5 text-center">
+                        <div class="water-glass-wrap mx-auto mb-4">
+                            <div class="water-glass">
+                                <div id="water-fill" class="water-fill" style="height:0%;"></div>
+                                <div class="water-glass-text"><span id="air-current">0</span>/<span id="air-target">8</span><div class="water-glass-sub">gelas</div></div>
+                            </div>
+                        </div>
+                        <div id="gelas-icons" class="gelas-icons-wrap mb-4"></div>
+                        <p id="air-status-text" class="air-status-text mb-4">Ayo minum lagi!</p>
+                        <button class="btn-km-primary btn-lg-custom w-100 mb-4" onclick="app.tambahAir()"><i class="fa-solid fa-plus me-2"></i>+ 1 Gelas</button>
+                        <div class="km-card p-3 bg-ivory-soft">
+                            <label class="km-label mb-2">Target Harian (Gelas)</label>
+                            <div class="d-flex gap-2">
+                                <input type="number" id="input-target-air" class="km-input text-center" value="8" min="1" max="20">
+                                <button class="btn-km-outline" onclick="app.updateTargetAir()">Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REMINDER KESEHATAN HARIAN -->
+        <div id="tab-reminder" class="tab-view d-none animate-slide-up">
+            <div class="page-header mb-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                        <h2 class="page-title"><i class="fa-solid fa-bell me-2"></i>Reminder Kesehatan Harian</h2>
+                        <p class="page-subtitle">Tandai aktivitas kesehatan yang sudah kamu lakukan hari ini</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="reminder-progress-wrap">
+                            <span class="reminder-progress-label" id="reminder-progress-text">0/0 selesai</span>
+                            <div class="reminder-progress-bar-wrap">
+                                <div id="reminder-progress-bar" class="reminder-progress-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <button class="btn-km-primary" data-bs-toggle="modal" data-bs-target="#modalTambahReminder">
+                            <i class="fa-solid fa-plus me-2"></i>Tambah
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3" id="reminder-list">
+                <div class="col-12 text-center py-4"><div class="spinner-border text-maroon" role="status"></div></div>
+            </div>
+        </div>
+
+        <!-- CATATAN KELUHAN KESEHATAN -->
+        <div id="tab-keluhan" class="tab-view d-none animate-slide-up">
+            <div class="page-header mb-4">
+                <h2 class="page-title"><i class="fa-solid fa-notes-medical me-2"></i>Catatan Keluhan Kesehatan</h2>
+                <p class="page-subtitle">Catat keluhan ringan yang kamu rasakan</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="km-card p-4">
+                        <h5 class="fw-semibold text-maroon mb-3"><i class="fa-solid fa-pen-to-square me-2"></i>Catat Keluhan</h5>
+                        <form id="form-keluhan" onsubmit="app.tambahKeluhan(event)">
+                            <div class="mb-3">
+                                <label class="km-label">Jenis Keluhan</label>
+                                <select id="input-keluhan-jenis" class="km-input" onchange="app.onKeluhanChange(this.value)" required>
+                                    <option value="">Pilih keluhan...</option>
+                                    <option value="Pusing">😵 Pusing</option>
+                                    <option value="Sakit Perut">🤢 Sakit Perut</option>
+                                    <option value="Demam">🤒 Demam</option>
+                                    <option value="Batuk">😮‍💨 Batuk</option>
+                                    <option value="Pilek">🤧 Pilek</option>
+                                    <option value="Lemas">😴 Lemas</option>
+                                    <option value="Mual">🥴 Mual</option>
+                                    <option value="Sakit Kepala">🤕 Sakit Kepala</option>
+                                    <option value="Sakit Tenggorokan">😩 Sakit Tenggorokan</option>
+                                    <option value="Nyeri Otot">💪 Nyeri Otot</option>
+                                    <option value="Lainnya">📝 Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="keluhan-lainnya-wrap" style="display:none;">
+                                <label class="km-label">Sebutkan keluhan</label>
+                                <input type="text" id="input-keluhan-lainnya" class="km-input" placeholder="Tulis keluhanmu...">
+                            </div>
+                            <div class="mb-3">
+                                <label class="km-label">Intensitas</label>
+                                <div class="intensitas-selector">
+                                    <button type="button" class="intensitas-btn active-ringan" data-val="ringan" onclick="app.setIntensitas('ringan')">🟢 Ringan</button>
+                                    <button type="button" class="intensitas-btn" data-val="sedang" onclick="app.setIntensitas('sedang')">🟡 Sedang</button>
+                                    <button type="button" class="intensitas-btn" data-val="berat" onclick="app.setIntensitas('berat')">🔴 Berat</button>
+                                </div>
+                                <input type="hidden" id="input-keluhan-intensitas" value="ringan">
+                            </div>
+                            <div class="mb-3">
+                                <label class="km-label">Tanggal</label>
+                                <input type="date" id="input-keluhan-tanggal" class="km-input" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="km-label">Catatan Tambahan (opsional)</label>
+                                <textarea id="input-keluhan-catatan" class="km-input" rows="3" placeholder="Tambahkan catatan..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="km-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-semibold text-maroon mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i>Riwayat Keluhan</h5>
+                            <div class="d-flex gap-2">
+                                <button class="filter-btn active" data-filter="semua" onclick="app.filterKeluhan('semua',this)">Semua</button>
+                                <button class="filter-btn" data-filter="ringan" onclick="app.filterKeluhan('ringan',this)">Ringan</button>
+                                <button class="filter-btn" data-filter="sedang" onclick="app.filterKeluhan('sedang',this)">Sedang</button>
+                                <button class="filter-btn" data-filter="berat" onclick="app.filterKeluhan('berat',this)">Berat</button>
+                            </div>
+                        </div>
+                        <div id="keluhan-list">
+                            <div class="text-center py-4"><div class="spinner-border text-maroon" role="status"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRACKER TIDUR -->
+        <div id="tab-tidur" class="tab-view d-none animate-slide-up">
+            <div class="page-header mb-4">
+                <h2 class="page-title"><i class="fa-solid fa-moon me-2"></i>Tracker Tidur</h2>
+                <p class="page-subtitle">Pantau pola tidurmu agar tetap segar setiap hari</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="km-card p-4">
+                        <h5 class="fw-semibold text-maroon mb-3"><i class="fa-solid fa-pen-to-square me-2"></i>Catat Tidur</h5>
+                        <form id="form-tidur" onsubmit="app.tambahTidur(event)">
+                            <div class="mb-3">
+                                <label class="km-label">Tanggal</label>
+                                <input type="date" id="input-tidur-tanggal" class="km-input" required>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <label class="km-label">Jam Tidur</label>
+                                    <input type="time" id="input-jam-tidur" class="km-input" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="km-label">Jam Bangun</label>
+                                    <input type="time" id="input-jam-bangun" class="km-input" required>
+                                </div>
+                            </div>
+                            <!-- Preview durasi -->
+                            <div id="tidur-preview" class="tidur-preview d-none mb-3"></div>
+                            <div class="mb-4">
+                                <label class="km-label">Catatan (opsional)</label>
+                                <input type="text" id="input-tidur-catatan" class="km-input" placeholder="Misal: susah tidur, mimpi buruk...">
+                            </div>
+                            <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan</button>
+                        </form>
+                    </div>
+                    <!-- Rata-rata tidur -->
+                    <div class="km-card p-4 mt-4">
+                        <h6 class="km-card-label mb-3">Statistik 7 Hari</h6>
+                        <div class="tidur-stat-row">
+                            <span class="tidur-stat-label">Rata-rata tidur</span>
+                            <span class="tidur-stat-val" id="tidur-avg">—</span>
+                        </div>
+                        <div class="tidur-stat-row">
+                            <span class="tidur-stat-label">Terpanjang</span>
+                            <span class="tidur-stat-val" id="tidur-max">—</span>
+                        </div>
+                        <div class="tidur-stat-row">
+                            <span class="tidur-stat-label">Terpendek</span>
+                            <span class="tidur-stat-val" id="tidur-min">—</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="km-card p-4 h-100">
+                        <h5 class="fw-semibold text-maroon mb-3"><i class="fa-solid fa-clock-rotate-left me-2"></i>Riwayat Tidur</h5>
+                        <div id="tidur-list">
+                            <div class="text-center py-4"><div class="spinner-border text-maroon" role="status"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RINGKASAN MINGGUAN -->
+        <div id="tab-ringkasan" class="tab-view d-none animate-slide-up">
+            <div class="page-header mb-4">
+                <h2 class="page-title"><i class="fa-solid fa-chart-bar me-2"></i>Ringkasan Kesehatan Mingguan</h2>
+                <p class="page-subtitle">Rekap 7 hari terakhir kondisi kesehatanmu</p>
+            </div>
+            <!-- Skor Kesehatan -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="km-card p-4 text-center skor-card">
+                        <h6 class="km-card-label mb-3">Skor Kesehatan Minggu Ini</h6>
+                        <div class="skor-circle-wrap">
+                            <svg class="skor-svg" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--ivory-mid)" stroke-width="10"/>
+                                <circle id="skor-arc" cx="60" cy="60" r="50" fill="none" stroke="var(--maroon)" stroke-width="10"
+                                    stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round"
+                                    transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1s ease"/>
+                            </svg>
+                            <div class="skor-number" id="skor-number">—</div>
+                        </div>
+                        <div id="skor-label" class="skor-label mt-2">Memuat...</div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="row g-3 h-100">
+                        <div class="col-6">
+                            <div class="km-card p-3 text-center h-100">
+                                <div class="km-card-icon-wrap bg-blue-soft mb-2" style="width:44px;height:44px;font-size:1.2rem;"><i class="fa-solid fa-droplet text-blue"></i></div>
+                                <div class="km-card-label">Total Air</div>
+                                <div class="km-stat-mini text-blue" id="ring-total-air">—</div>
+                                <div class="km-stat-mini-label">gelas / 7 hari</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="km-card p-3 text-center h-100">
+                                <div class="km-card-icon-wrap bg-purple-soft mb-2" style="width:44px;height:44px;font-size:1.2rem;"><i class="fa-solid fa-moon text-purple"></i></div>
+                                <div class="km-card-label">Rata-rata Tidur</div>
+                                <div class="km-stat-mini text-purple" id="ring-avg-tidur">—</div>
+                                <div class="km-stat-mini-label">per malam</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="km-card p-3 text-center h-100">
+                                <div class="km-card-icon-wrap bg-green-soft mb-2" style="width:44px;height:44px;font-size:1.2rem;"><i class="fa-solid fa-bowl-food text-green"></i></div>
+                                <div class="km-card-label">Makan Sehat</div>
+                                <div class="km-stat-mini text-green" id="ring-makan-sehat">—</div>
+                                <div class="km-stat-mini-label">kali / 7 hari</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="km-card p-3 text-center h-100">
+                                <div class="km-card-icon-wrap bg-red-soft mb-2" style="width:44px;height:44px;font-size:1.2rem;"><i class="fa-solid fa-notes-medical text-maroon"></i></div>
+                                <div class="km-card-label">Total Keluhan</div>
+                                <div class="km-stat-mini text-maroon" id="ring-total-keluhan">—</div>
+                                <div class="km-stat-mini-label">keluhan / 7 hari</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Bar Charts -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="km-card p-4">
+                        <h6 class="fw-semibold text-maroon mb-3"><i class="fa-solid fa-droplet me-2"></i>Air Minum 7 Hari</h6>
+                        <div id="chart-air" class="bar-chart-wrap"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="km-card p-4">
+                        <h6 class="fw-semibold text-maroon mb-3"><i class="fa-solid fa-moon me-2"></i>Durasi Tidur 7 Hari</h6>
+                        <div id="chart-tidur" class="bar-chart-wrap"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TAMBAH OBAT -->
+<div class="modal fade" id="modalTambahObat" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content km-modal">
+            <div class="modal-header km-modal-header"><h5 class="modal-title"><i class="fa-solid fa-plus-circle me-2"></i>Tambah Obat Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <form id="form-obat" onsubmit="app.tambahObat(event)">
+                    <div class="mb-3"><label class="km-label">Nama Obat</label><input type="text" id="input-obat-nama" class="km-input" placeholder="Misal: Paracetamol" required></div>
+                    <div class="mb-3"><label class="km-label">Kegunaan</label><input type="text" id="input-obat-guna" class="km-input" placeholder="Misal: Demam, sakit kepala" required></div>
+                    <div class="mb-4"><label class="km-label">Jumlah Stok</label><input type="number" id="input-obat-stok" class="km-input" value="5" min="0" required></div>
+                    <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan Obat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TAMBAH REMINDER -->
+<div class="modal fade" id="modalTambahReminder" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content km-modal">
+            <div class="modal-header km-modal-header"><h5 class="modal-title"><i class="fa-solid fa-bell me-2"></i>Tambah Reminder</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <form id="form-reminder" onsubmit="app.tambahReminder(event)">
+                    <div class="mb-3">
+                        <label class="km-label">Ikon</label>
+                        <div class="ikon-selector">
+                            <button type="button" class="ikon-btn active" data-val="🔔" onclick="app.setIkon('🔔',this,'input-reminder-ikon')">🔔</button>
+                            <button type="button" class="ikon-btn" data-val="💧" onclick="app.setIkon('💧',this,'input-reminder-ikon')">💧</button>
+                            <button type="button" class="ikon-btn" data-val="🍎" onclick="app.setIkon('🍎',this,'input-reminder-ikon')">🍎</button>
+                            <button type="button" class="ikon-btn" data-val="💊" onclick="app.setIkon('💊',this,'input-reminder-ikon')">💊</button>
+                            <button type="button" class="ikon-btn" data-val="🏃" onclick="app.setIkon('🏃',this,'input-reminder-ikon')">🏃</button>
+                            <button type="button" class="ikon-btn" data-val="😴" onclick="app.setIkon('😴',this,'input-reminder-ikon')">😴</button>
+                            <button type="button" class="ikon-btn" data-val="🧘" onclick="app.setIkon('🧘',this,'input-reminder-ikon')">🧘</button>
+                            <button type="button" class="ikon-btn" data-val="🥦" onclick="app.setIkon('🥦',this,'input-reminder-ikon')">🥦</button>
+                        </div>
+                        <input type="hidden" id="input-reminder-ikon" value="🔔">
+                    </div>
+                    <div class="mb-4">
+                        <label class="km-label">Teks Reminder</label>
+                        <input type="text" id="input-reminder-teks" class="km-input" placeholder="Misal: Minum vitamin C" required>
+                    </div>
+                    <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Tambah Reminder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL EDIT ===================== -->
+
+<!-- MODAL EDIT OBAT -->
+<div class="modal fade" id="modalEditObat" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content km-modal">
+            <div class="modal-header km-modal-header"><h5 class="modal-title"><i class="fa-solid fa-pen me-2"></i>Edit Obat</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <form id="form-edit-obat" onsubmit="app.simpanEditObat(event)">
+                    <input type="hidden" id="edit-obat-id">
+                    <div class="mb-3"><label class="km-label">Nama Obat</label><input type="text" id="edit-obat-nama" class="km-input" required></div>
+                    <div class="mb-4"><label class="km-label">Kegunaan</label><input type="text" id="edit-obat-guna" class="km-input" required></div>
+                    <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT MAKANAN -->
+<div class="modal fade" id="modalEditMakanan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content km-modal">
+            <div class="modal-header km-modal-header"><h5 class="modal-title"><i class="fa-solid fa-pen me-2"></i>Edit Makanan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <form id="form-edit-makanan" onsubmit="app.simpanEditMakanan(event)">
+                    <input type="hidden" id="edit-makanan-id">
+                    <div class="mb-3"><label class="km-label">Nama Makanan</label><input type="text" id="edit-makanan-nama" class="km-input" required></div>
+                    <div class="mb-3">
+                        <label class="km-label">Waktu Makan</label>
+                        <select id="edit-makanan-waktu" class="km-input" required>
+                            <option value="pagi">🌅 Pagi</option>
+                            <option value="siang">☀️ Siang</option>
+                            <option value="malam">🌙 Malam</option>
+                            <option value="snack">🍪 Cemilan</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="km-label">Kategori</label>
+                        <select id="edit-makanan-kategori" class="km-input" required>
+                            <option value="sehat">🥗 Sehat</option>
+                            <option value="cukup sehat">🍱 Cukup Sehat</option>
+                            <option value="kurang sehat">🍔 Kurang Sehat</option>
+                        </select>
+                    </div>
+                    <div class="mb-4"><label class="km-label">Tanggal</label><input type="date" id="edit-makanan-tanggal" class="km-input" required></div>
+                    <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT KELUHAN -->
+<div class="modal fade" id="modalEditKeluhan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content km-modal">
+            <div class="modal-header km-modal-header"><h5 class="modal-title"><i class="fa-solid fa-pen me-2"></i>Edit Keluhan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <form id="form-edit-keluhan" onsubmit="app.simpanEditKeluhan(event)">
+                    <input type="hidden" id="edit-keluhan-id">
+                    <div class="mb-3"><label class="km-label">Jenis Keluhan</label><input type="text" id="edit-keluhan-jenis" class="km-input" required></div>
+                    <div class="mb-3">
+                        <label class="km-label">Intensitas</label>
+                        <select id="edit-keluhan-intensitas" class="km-input" required>
+                            <option value="ringan">Ringan</option>
+                            <option value="sedang">Sedang</option>
+                            <option value="berat">Berat</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label class="km-label">Tanggal</label><input type="date" id="edit-keluhan-tanggal" class="km-input" required></div>
+                    <div class="mb-4"><label class="km-label">Catatan</label><textarea id="edit-keluhan-catatan" class="km-input" rows="3"></textarea></div>
+                    <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT TIDUR -->
+<div class="modal fade" id="modalEditTidur" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content km-modal">
+            <div class="modal-header km-modal-header"><h5 class="modal-title"><i class="fa-solid fa-pen me-2"></i>Edit Tidur</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <form id="form-edit-tidur" onsubmit="app.simpanEditTidur(event)">
+                    <input type="hidden" id="edit-tidur-id">
+                    <div class="mb-3"><label class="km-label">Tanggal</label><input type="date" id="edit-tidur-tanggal" class="km-input" required></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6"><label class="km-label">Jam Tidur</label><input type="time" id="edit-tidur-jam-tidur" class="km-input" required></div>
+                        <div class="col-6"><label class="km-label">Jam Bangun</label><input type="time" id="edit-tidur-jam-bangun" class="km-input" required></div>
+                    </div>
+                    <div class="mb-4"><label class="km-label">Catatan</label><input type="text" id="edit-tidur-catatan" class="km-input"></div>
+                    <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT REMINDER -->
+<div class="modal fade" id="modalEditReminder" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content km-modal">
+            <div class="modal-header km-modal-header"><h5 class="modal-title"><i class="fa-solid fa-pen me-2"></i>Edit Reminder</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body p-4">
+                <form id="form-edit-reminder" onsubmit="app.simpanEditReminder(event)">
+                    <input type="hidden" id="edit-reminder-id">
+                    <div class="mb-3">
+                        <label class="km-label">Ikon</label>
+                        <div class="ikon-selector" id="edit-ikon-selector">
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="🔔" onclick="app.setIkon('🔔',this,'edit-reminder-ikon')">🔔</button>
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="💧" onclick="app.setIkon('💧',this,'edit-reminder-ikon')">💧</button>
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="🍎" onclick="app.setIkon('🍎',this,'edit-reminder-ikon')">🍎</button>
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="💊" onclick="app.setIkon('💊',this,'edit-reminder-ikon')">💊</button>
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="🏃" onclick="app.setIkon('🏃',this,'edit-reminder-ikon')">🏃</button>
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="😴" onclick="app.setIkon('😴',this,'edit-reminder-ikon')">😴</button>
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="🧘" onclick="app.setIkon('🧘',this,'edit-reminder-ikon')">🧘</button>
+                            <button type="button" class="ikon-btn edit-ikon-btn" data-val="🥦" onclick="app.setIkon('🥦',this,'edit-reminder-ikon')">🥦</button>
+                        </div>
+                        <input type="hidden" id="edit-reminder-ikon">
+                    </div>
+                    <div class="mb-4">
+                        <label class="km-label">Teks Reminder</label>
+                        <input type="text" id="edit-reminder-teks" class="km-input" required>
+                    </div>
+                    <button type="submit" class="btn-km-primary w-100"><i class="fa-solid fa-floppy-disk me-2"></i>Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+    <div id="km-toast" class="toast align-items-center km-toast" role="alert" aria-atomic="true">
+        <div class="d-flex"><div class="toast-body" id="toast-body">Berhasil!</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
