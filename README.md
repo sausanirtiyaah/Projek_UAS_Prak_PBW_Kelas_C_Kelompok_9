@@ -135,7 +135,7 @@ define('DB_NAME', 'kosmed_db');
 
 Buka browser, lalu akses:
 
-http://localhost/2408107010048_SausanIrtiyaah_UAS_PBW/
+http://localhost/Projek_UAS_Prak_PBW_Kelas_C_Kelompok_9/
 
 ## Status Project
 
